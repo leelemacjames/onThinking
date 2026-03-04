@@ -41,6 +41,20 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* ---- Reduced motion ---- */
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      transition: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .scroll-hint { animation: none !important; opacity: 0.5; }
+    .meter-fill { transition: none !important; }
+    .archetype-card, .piaget-btn, .cta-link, .level-node, .consequence-item {
+      transition: none !important;
+    }
+  }
+
   .reveal {
     opacity: 0;
     transform: translateY(32px);
@@ -217,7 +231,12 @@
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
-  .tower-level .level-node:hover { transform: scale(1.15); }
+  .tower-level .level-node:hover,
+  .tower-level .level-node:focus-visible {
+    transform: scale(1.15);
+    outline: 2px solid var(--accent-gold);
+    outline-offset: 3px;
+  }
   .tower-level .level-desc {
     padding-left: 1.2rem;
     font-size: 0.95rem;
@@ -283,6 +302,20 @@
     color: var(--text-muted);
     letter-spacing: 0.06em;
     text-transform: uppercase;
+  }
+
+  /* Balance note */
+  .balance-note {
+    text-align: center;
+    margin: 1.5rem auto 0;
+    max-width: 500px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.74rem;
+    font-style: italic;
+    color: var(--text-muted);
+    padding: 0.6rem 1rem;
+    border: 1px dashed var(--border-subtle);
+    border-radius: 6px;
   }
 
   /* ---- ARCHETYPE CARDS ---- */
@@ -368,6 +401,54 @@
     font-style: normal;
     color: var(--text-muted);
     letter-spacing: 0.04em;
+  }
+
+  /* Footnote tooltip */
+  .fn-trigger {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    font-style: normal;
+    vertical-align: super;
+    color: var(--accent-gold);
+    cursor: help;
+    position: relative;
+    margin-left: 2px;
+  }
+  .fn-trigger .fn-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-card);
+    border: 1px solid var(--border-accent);
+    border-radius: 6px;
+    padding: 0.6rem 0.8rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    max-width: 300px;
+    white-space: normal;
+    line-height: 1.4;
+    z-index: 10;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    pointer-events: none;
+  }
+  .fn-trigger .fn-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--border-accent);
+  }
+  .fn-trigger:hover .fn-tooltip,
+  .fn-trigger:focus .fn-tooltip {
+    display: block;
   }
 
   .consequences {
@@ -460,6 +541,10 @@
     color: var(--accent-gold);
     background: rgba(201,168,76,0.06);
   }
+  .piaget-btn:focus-visible {
+    outline: 2px solid var(--accent-gold);
+    outline-offset: 2px;
+  }
   .piaget-panel {
     display: none;
     padding: 1.5rem;
@@ -513,6 +598,10 @@
     background: rgba(201,168,76,0.1);
     transform: translateY(-2px);
   }
+  .cta-link:focus-visible {
+    outline: 2px solid var(--accent-gold);
+    outline-offset: 3px;
+  }
 
   .footer-note {
     text-align: center;
@@ -556,6 +645,8 @@
     .archetype-card h4, .tower-level .level-label, .hero-kicker, h3 { color: #333 !important; }
     p, .text-secondary { color: #444 !important; }
     .scroll-hint { display: none; }
+    .fn-trigger .fn-tooltip { display: block !important; position: static; transform: none;
+      white-space: normal; box-shadow: none; border: 1px solid #ccc; margin-top: 0.3rem; }
   }
 </style>
 </head>
@@ -566,7 +657,7 @@
   <div class="hero-kicker reveal">Epistemology of Science</div>
   <h1 class="reveal">The Epistemic Hierarchy</h1>
   <p class="hero-sub reveal">How scientific understanding propagates through layers of interpretation, and why each layer adds distance from evidence</p>
-  <div class="scroll-hint">Scroll to explore</div>
+  <div class="scroll-hint" aria-hidden="true">Scroll to explore</div>
 </section>
 
 <!-- PIAGET FRAMING -->
@@ -575,24 +666,24 @@
   <h2 class="reveal">Assimilation vs. Accommodation</h2>
   <p class="reveal">Jean Piaget identified two mechanisms by which we integrate new knowledge. One preserves our existing framework; the other transforms it. The difference matters enormously for how scientific understanding propagates through society.</p>
 
-  <div class="piaget-toggle reveal">
-    <button class="piaget-btn active" onclick="showPiaget('assim')">Assimilation</button>
-    <button class="piaget-btn" onclick="showPiaget('accom')">Accommodation</button>
+  <div class="piaget-toggle reveal" role="tablist" aria-label="Piaget mechanisms">
+    <button class="piaget-btn active" role="tab" aria-selected="true" aria-controls="piaget-assim" data-which="assim" onclick="showPiaget('assim')">Assimilation</button>
+    <button class="piaget-btn" role="tab" aria-selected="false" aria-controls="piaget-accom" data-which="accom" onclick="showPiaget('accom')">Accommodation</button>
   </div>
 
-  <div id="piaget-assim" class="piaget-panel active reveal">
+  <div id="piaget-assim" class="piaget-panel active reveal" role="tabpanel">
     <h4 style="color: var(--accent-rose);">Assimilation</h4>
     <p>New information is spliced into the existing framework without altering it. This works when experience aligns with our internal model, but creates a subtle danger: we may reinterpret evidence so that it <em>appears</em> to confirm what we already believe. The world is not permitted to correct the theory; instead the theory quietly reshapes perception.</p>
   </div>
 
-  <div id="piaget-accom" class="piaget-panel reveal">
+  <div id="piaget-accom" class="piaget-panel reveal" role="tabpanel" hidden>
     <h4 style="color: var(--accent-teal);">Accommodation</h4>
     <p>The process of revising our mental representation so it aligns with new experience. Accommodation is uncomfortable: it forces us to acknowledge that our expectations were wrong. Yet it is precisely this moment of cognitive dissonance that genuine learning occurs. Teaching, at its best, provokes exactly this.</p>
   </div>
 
   <div class="quote-block reveal">
     <p>"I couldn't reduce it to the freshman level. That means we don't really understand it."</p>
-    <span class="attribution">Richard Feynman, on spin-statistics</span>
+    <span class="attribution">Attributed to Richard Feynman, on spin-statistics<span class="fn-trigger" tabindex="0" aria-label="Source note">*<span class="fn-tooltip">Widely circulated but possibly apocryphal. The anecdote appears in various retellings; no primary source has been confirmed. Its pedagogical force does not depend on literal accuracy.</span></span></span>
   </div>
 
   <p class="reveal">The point is not that physicists lack formal knowledge. The anecdote reveals something deeper: some scientific ideas can be understood structurally without admitting an intuitive explanation accessible to everyone. <strong>Knowledge sometimes outruns explanation.</strong></p>
@@ -608,7 +699,7 @@
     <p>Each level adds epistemic distance from the original evidence</p>
   </div>
 
-  <div class="distance-meter reveal">
+  <div class="distance-meter reveal" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Epistemic distance from evidence">
     <div class="meter-bar">
       <div class="meter-fill" id="distanceFill" style="width: 0%"></div>
     </div>
@@ -622,7 +713,7 @@
   <div class="tower">
     <div class="tower-level reveal" data-distance="25">
       <div class="level-label">Primary</div>
-      <div class="level-node">I</div>
+      <div class="level-node" tabindex="0" role="button" aria-label="Level I: Primary">I</div>
       <div class="level-desc" data-label="Primary">
         <strong>Generate original results.</strong> Primary scientists produce experiments, develop theories, and test ideas under peer scrutiny. Closest to the evidence.
       </div>
@@ -634,7 +725,7 @@
 
     <div class="tower-level reveal" data-distance="50">
       <div class="level-label">Secondary</div>
-      <div class="level-node">II</div>
+      <div class="level-node" tabindex="0" role="button" aria-label="Level II: Secondary">II</div>
       <div class="level-desc" data-label="Secondary">
         <strong>Interpret research papers.</strong> They extract insights, compare results across studies, and sometimes approach the boundary of producing original work.
       </div>
@@ -647,7 +738,7 @@
 
     <div class="tower-level reveal" data-distance="75">
       <div class="level-label">Tertiary</div>
-      <div class="level-node">III</div>
+      <div class="level-node" tabindex="0" role="button" aria-label="Level III: Tertiary">III</div>
       <div class="level-desc" data-label="Tertiary">
         <strong>Interpret interpretations.</strong> Consumers of reviews, summaries, and meta-analyses. Each distillation introduces further mediation between reader and evidence.
       </div>
@@ -661,11 +752,15 @@
 
     <div class="tower-level reveal" data-distance="100">
       <div class="level-label">Quaternary</div>
-      <div class="level-node">IV</div>
+      <div class="level-node" tabindex="0" role="button" aria-label="Level IV: Quaternary">IV</div>
       <div class="level-desc" data-label="Quaternary">
         <strong>Public discourse interpreting the summaries.</strong> Social discussion, forums, and debate. Participants interact with science at several removes from evidence. The realm of archetypes.
       </div>
     </div>
+  </div>
+
+  <div class="balance-note reveal">
+    Distance adds distortion risk, but it also enables synthesis and error-correction. Reviews can be more accurate than the papers they review.
   </div>
 </section>
 
@@ -675,7 +770,7 @@
 <section class="archetypes-wrapper">
   <div class="tower-title reveal">
     <div class="section-kicker">The Quaternary Level</div>
-    <h2>Four Breeds of Curious</h2>
+    <h2>Four Kinds of Curious</h2>
     <p>At the outermost layer, participants adopt distinct epistemic postures</p>
   </div>
 
@@ -712,10 +807,10 @@
 
   <div class="quote-block reveal">
     <p>No single person possesses the knowledge required to produce a simple pencil. The wood, graphite, rubber, machinery, and logistics involve countless individuals cooperating through a system none fully comprehends.</p>
-    <span class="attribution">After Milton Friedman</span>
+    <span class="attribution">After Leonard Read, <em>I, Pencil</em> (popularised by Milton Friedman)</span>
   </div>
 
-  <p class="reveal">Modern science resembles this pencil. No individual mind grasps the whole structure. Knowledge is distributed across institutions, disciplines, and generations. This is not a deficiency; it is the nature of collective understanding at scale.</p>
+  <p class="reveal">Modern science resembles this pencil. No individual mind grasps the whole structure. Knowledge is distributed across institutions, disciplines, and generations. This isn't a defect; it's what collective knowing looks like at scale.</p>
 
   <p class="reveal"><strong>Therefore:</strong></p>
 
@@ -750,8 +845,9 @@
   <div class="llm-highlight reveal">
     <h3>What happens when the interpreter is not human?</h3>
     <p>LLMs operate across all four levels simultaneously. They consume primary literature, secondary analysis, tertiary review, and quaternary discourse. They assimilate everything, but do they ever accommodate?</p>
-    <p>An LLM can explain spin-statistics at the freshman level, which Feynman could not. But does that constitute understanding, or is it the most sophisticated assimilation mechanism ever built: reshaping the appearance of knowledge without genuine cognitive dissonance?</p>
+    <p>An LLM can generate a freshman-style explanation of spin-statistics on demand, something even Feynman joked was out of reach. But does that constitute understanding, or is it the most sophisticated assimilation mechanism ever built: reshaping the appearance of knowledge without genuine cognitive dissonance?</p>
     <p>The epistemic hierarchy gains a fifth participant: a non-human layer that <em>compresses</em> interpretation rather than <em>adding</em> it. Whether this compression preserves or destroys meaning is the open question of our moment.</p>
+    <p>And there is a further possibility. Used as an adversarial tutor, an LLM could <em>accelerate</em> accommodation: probing a student's model, surfacing contradictions, forcing the discomfort where genuine learning begins. The same tool that makes assimilation frictionless could, in the right pedagogical frame, become the most effective instrument for disrupting it.</p>
   </div>
 
   <p class="reveal">The educational funnel, from school through university, was already a system for progressive refinement of approximation. LLMs now sit alongside that funnel, offering a lateral pathway that bypasses the traditional layering. The epistemic distance from evidence has been radically reconfigured.</p>
@@ -763,8 +859,8 @@
 
 <!-- CTA -->
 <section class="cta-section reveal">
-  <h2>What Breed of Curious Are You?</h2>
-  <p>Explore the nascent essay on the sociology of scientific curiosity and the limits of explanation.</p>
+  <h2>What Kind of Curious Are You?</h2>
+  <p>Explore the full essay on the sociology of scientific curiosity and the limits of explanation.</p>
   <a href="https://mcmurmerings.wordpress.com/what-breed-of-curious-scientist-are-you/" target="_blank" rel="noopener" class="cta-link">Read on McMurmerings &#x2192;</a>
 </section>
 
@@ -782,28 +878,39 @@ const observer = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-// Distance meter driven by tower scroll
+// Distance meter
 const distanceFill = document.getElementById('distanceFill');
 const meterObserver = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       const dist = e.target.getAttribute('data-distance');
-      if (dist) distanceFill.style.width = dist + '%';
+      if (dist) {
+        distanceFill.style.width = dist + '%';
+        distanceFill.closest('[role="progressbar"]')?.setAttribute('aria-valuenow', dist);
+      }
     }
   });
 }, { threshold: 0.5 });
 
 document.querySelectorAll('.tower-level').forEach(el => meterObserver.observe(el));
 
-// Piaget toggle
+// Piaget toggle via data attributes
 function showPiaget(which) {
-  document.getElementById('piaget-assim').classList.toggle('active', which === 'assim');
-  document.getElementById('piaget-accom').classList.toggle('active', which === 'accom');
+  const panels = { assim: 'piaget-assim', accom: 'piaget-accom' };
+  Object.entries(panels).forEach(([key, id]) => {
+    const panel = document.getElementById(id);
+    const isActive = key === which;
+    panel.classList.toggle('active', isActive);
+    panel.hidden = !isActive;
+  });
   document.querySelectorAll('.piaget-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.textContent.toLowerCase().startsWith(which.slice(0,5)));
+    const isActive = btn.getAttribute('data-which') === which;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-selected', isActive);
   });
 }
 </script>
 
 </body>
 </html>
+
