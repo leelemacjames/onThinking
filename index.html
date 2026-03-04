@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Epistemic Hierarchy &mdash; Layers of Scientific Understanding</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg-deep: #0a0c10;
+    --bg-card: #12151c;
+    --bg-card-hover: #181c26;
+    --border-subtle: #1e2230;
+    --border-accent: #2a3050;
+    --text-primary: #e8e6e1;
+    --text-secondary: #9a978f;
+    --text-muted: #5c5a55;
+    --accent-gold: #c9a84c;
+    --accent-gold-dim: #8a7030;
+    --accent-blue: #4a7fb5;
+    --accent-teal: #3a9e8f;
+    --accent-rose: #b5586a;
+    --accent-violet: #7b68ae;
+    --accent-orange: #c4784a;
+    --layer-primary: #4a7fb5;
+    --layer-secondary: #3a9e8f;
+    --layer-tertiary: #c9a84c;
+    --layer-quaternary: #b5586a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 19px;
+    line-height: 1.72;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ---- HERO ---- */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 40%, rgba(74,127,181,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 30% 70%, rgba(201,168,76,0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-kicker {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    margin-bottom: 1.4rem;
+  }
+  .hero h1 {
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-weight: 500;
+    line-height: 1.18;
+    max-width: 14em;
+    margin-bottom: 1.2rem;
+  }
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    max-width: 32em;
+    font-style: italic;
+  }
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    animation: pulse-down 2s ease-in-out infinite;
+  }
+  @keyframes pulse-down {
+    0%, 100% { opacity: 0.4; transform: translateY(0); }
+    50% { opacity: 0.8; transform: translateY(6px); }
+  }
+
+  /* ---- CONTENT SECTIONS ---- */
+  .content-section {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+  .content-section h2 {
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+  .content-section h3, .section-kicker {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    margin-bottom: 0.6rem;
+  }
+  .content-section p {
+    margin-bottom: 1.3rem;
+    color: var(--text-secondary);
+  }
+  .content-section p strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .divider {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-subtle), transparent);
+  }
+
+  /* ---- EPISTEMIC TOWER ---- */
+  .tower-wrapper {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+  .tower-title {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .tower-title h2 {
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  .tower-title p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+  }
+
+  .tower {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .tower::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--layer-primary), var(--layer-secondary), var(--layer-tertiary), var(--layer-quaternary));
+    transform: translateX(-50%);
+    opacity: 0.3;
+  }
+
+  .tower-level {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    align-items: center;
+    padding: 1.8rem 0;
+    position: relative;
+  }
+  .tower-level .level-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-align: right;
+    padding-right: 1.2rem;
+  }
+  .tower-level .level-node {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    background: var(--bg-deep);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .tower-level .level-node:hover { transform: scale(1.15); }
+  .tower-level .level-desc {
+    padding-left: 1.2rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+  }
+  .tower-level .level-desc strong { color: var(--text-primary); }
+
+  .tower-level:nth-child(1) .level-label { color: var(--layer-primary); }
+  .tower-level:nth-child(1) .level-node { border-color: var(--layer-primary); color: var(--layer-primary); box-shadow: 0 0 16px rgba(74,127,181,0.15); }
+  .tower-level:nth-child(2) .level-label { color: var(--layer-secondary); }
+  .tower-level:nth-child(2) .level-node { border-color: var(--layer-secondary); color: var(--layer-secondary); box-shadow: 0 0 16px rgba(58,158,143,0.15); }
+  .tower-level:nth-child(3) .level-label { color: var(--layer-tertiary); }
+  .tower-level:nth-child(3) .level-node { border-color: var(--layer-tertiary); color: var(--layer-tertiary); box-shadow: 0 0 16px rgba(201,168,76,0.15); }
+  .tower-level:nth-child(4) .level-label { color: var(--layer-quaternary); }
+  .tower-level:nth-child(4) .level-node { border-color: var(--layer-quaternary); color: var(--layer-quaternary); box-shadow: 0 0 16px rgba(181,88,106,0.15); }
+
+  .accumulation {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0;
+  }
+  .acc-badge {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    padding: 0.25rem 0.65rem;
+    border-radius: 100px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+  }
+  .acc-badge.active-interp { color: var(--accent-teal); border-color: rgba(58,158,143,0.3); }
+  .acc-badge.active-bias { color: var(--accent-orange); border-color: rgba(196,120,74,0.3); }
+  .acc-badge.active-simp { color: var(--accent-violet); border-color: rgba(123,104,174,0.3); }
+
+  /* Distance meter */
+  .distance-meter {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+  }
+  .meter-bar {
+    height: 8px;
+    border-radius: 4px;
+    background: var(--bg-card);
+    position: relative;
+    overflow: hidden;
+  }
+  .meter-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.8s ease;
+    background: linear-gradient(90deg, var(--layer-primary), var(--layer-secondary), var(--layer-tertiary), var(--layer-quaternary));
+  }
+  .meter-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.4rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ---- ARCHETYPE CARDS ---- */
+  .archetypes-wrapper {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+  .archetypes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.2rem;
+    margin-top: 2rem;
+  }
+  .archetype-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 1.8rem;
+    transition: all 0.35s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .archetype-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    opacity: 0.7;
+  }
+  .archetype-card:nth-child(1)::before { background: var(--accent-blue); }
+  .archetype-card:nth-child(2)::before { background: var(--accent-teal); }
+  .archetype-card:nth-child(3)::before { background: var(--accent-violet); }
+  .archetype-card:nth-child(4)::before { background: var(--accent-orange); }
+  .archetype-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-accent);
+    transform: translateY(-3px);
+  }
+  .archetype-card .card-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+  .archetype-card h4 {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.7rem;
+  }
+  .archetype-card p {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .archetype-card:nth-child(1) h4 { color: var(--accent-blue); }
+  .archetype-card:nth-child(2) h4 { color: var(--accent-teal); }
+  .archetype-card:nth-child(3) h4 { color: var(--accent-violet); }
+  .archetype-card:nth-child(4) h4 { color: var(--accent-orange); }
+
+  /* ---- QUOTE & DISTRIBUTED ---- */
+  .distributed-section {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+  .quote-block {
+    border-left: 3px solid var(--accent-gold-dim);
+    padding: 1.2rem 1.6rem;
+    margin: 1.8rem 0;
+    background: rgba(201,168,76,0.03);
+    border-radius: 0 6px 6px 0;
+  }
+  .quote-block p {
+    font-style: italic;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+  }
+  .quote-block .attribution {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    font-style: normal;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  .consequences {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+  .consequence-item {
+    text-align: center;
+    padding: 1.4rem 1rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    background: var(--bg-card);
+    transition: border-color 0.3s ease;
+  }
+  .consequence-item:hover { border-color: var(--border-accent); }
+  .consequence-item .c-icon { font-size: 1.6rem; margin-bottom: 0.5rem; display: block; }
+  .consequence-item .c-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 0.3rem;
+  }
+  .consequence-item .c-desc { font-size: 0.85rem; color: var(--text-muted); }
+
+  /* ---- LLM SECTION ---- */
+  .llm-section {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+  .llm-highlight {
+    background: linear-gradient(135deg, rgba(74,127,181,0.06), rgba(201,168,76,0.06));
+    border: 1px solid var(--border-accent);
+    border-radius: 12px;
+    padding: 2.5rem;
+    margin: 2rem 0;
+    position: relative;
+  }
+  .llm-highlight::before {
+    content: '?';
+    position: absolute;
+    top: -0.6rem;
+    right: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2.5rem;
+    color: var(--accent-gold-dim);
+    opacity: 0.3;
+  }
+  .llm-highlight h3 {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .llm-highlight p {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+  .llm-highlight p:last-child { margin-bottom: 0; }
+
+  /* Piaget toggle */
+  .piaget-toggle {
+    display: flex;
+    gap: 1rem;
+    margin: 2rem 0;
+    justify-content: center;
+  }
+  .piaget-btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    padding: 0.6rem 1.4rem;
+    border-radius: 100px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .piaget-btn:hover, .piaget-btn.active {
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+    background: rgba(201,168,76,0.06);
+  }
+  .piaget-panel {
+    display: none;
+    padding: 1.5rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    background: var(--bg-card);
+    margin-bottom: 2rem;
+  }
+  .piaget-panel.active { display: block; }
+  .piaget-panel h4 {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+  }
+  .piaget-panel p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+  }
+
+  /* ---- CTA ---- */
+  .cta-section {
+    text-align: center;
+    padding: 5rem 2rem 6rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .cta-section h2 {
+    font-size: 1.6rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+  .cta-section p {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+  }
+  .cta-link {
+    display: inline-block;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    padding: 0.8rem 2rem;
+    border: 1px solid var(--accent-gold);
+    border-radius: 100px;
+    color: var(--accent-gold);
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  .cta-link:hover {
+    background: rgba(201,168,76,0.1);
+    transform: translateY(-2px);
+  }
+
+  .footer-note {
+    text-align: center;
+    padding: 2rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 640px) {
+    .tower-level { grid-template-columns: 40px 1fr; gap: 0.8rem; }
+    .tower-level .level-label { display: none; }
+    .tower-level .level-desc::before {
+      content: attr(data-label);
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+    .tower-level:nth-child(1) .level-desc::before { color: var(--layer-primary); }
+    .tower-level:nth-child(2) .level-desc::before { color: var(--layer-secondary); }
+    .tower-level:nth-child(3) .level-desc::before { color: var(--layer-tertiary); }
+    .tower-level:nth-child(4) .level-desc::before { color: var(--layer-quaternary); }
+    .tower::before { left: 20px; }
+    .consequences { grid-template-columns: 1fr; }
+    .archetypes-grid { grid-template-columns: 1fr; }
+  }
+
+  @media print {
+    body { background: #fff; color: #111; }
+    .reveal { opacity: 1 !important; transform: none !important; }
+    .hero { min-height: auto; page-break-after: always; }
+    .archetype-card, .consequence-item, .llm-highlight, .quote-block {
+      background: #f8f8f6; border-color: #ddd; break-inside: avoid;
+    }
+    .archetype-card h4, .tower-level .level-label, .hero-kicker, h3 { color: #333 !important; }
+    p, .text-secondary { color: #444 !important; }
+    .scroll-hint { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-kicker reveal">Epistemology of Science</div>
+  <h1 class="reveal">The Epistemic Hierarchy</h1>
+  <p class="hero-sub reveal">How scientific understanding propagates through layers of interpretation, and why each layer adds distance from evidence</p>
+  <div class="scroll-hint">Scroll to explore</div>
+</section>
+
+<!-- PIAGET FRAMING -->
+<section class="content-section">
+  <h3 class="reveal">The Cognitive Foundations</h3>
+  <h2 class="reveal">Assimilation vs. Accommodation</h2>
+  <p class="reveal">Jean Piaget identified two mechanisms by which we integrate new knowledge. One preserves our existing framework; the other transforms it. The difference matters enormously for how scientific understanding propagates through society.</p>
+
+  <div class="piaget-toggle reveal">
+    <button class="piaget-btn active" onclick="showPiaget('assim')">Assimilation</button>
+    <button class="piaget-btn" onclick="showPiaget('accom')">Accommodation</button>
+  </div>
+
+  <div id="piaget-assim" class="piaget-panel active reveal">
+    <h4 style="color: var(--accent-rose);">Assimilation</h4>
+    <p>New information is spliced into the existing framework without altering it. This works when experience aligns with our internal model, but creates a subtle danger: we may reinterpret evidence so that it <em>appears</em> to confirm what we already believe. The world is not permitted to correct the theory; instead the theory quietly reshapes perception.</p>
+  </div>
+
+  <div id="piaget-accom" class="piaget-panel reveal">
+    <h4 style="color: var(--accent-teal);">Accommodation</h4>
+    <p>The process of revising our mental representation so it aligns with new experience. Accommodation is uncomfortable: it forces us to acknowledge that our expectations were wrong. Yet it is precisely this moment of cognitive dissonance that genuine learning occurs. Teaching, at its best, provokes exactly this.</p>
+  </div>
+
+  <div class="quote-block reveal">
+    <p>"I couldn't reduce it to the freshman level. That means we don't really understand it."</p>
+    <span class="attribution">Richard Feynman, on spin-statistics</span>
+  </div>
+
+  <p class="reveal">The point is not that physicists lack formal knowledge. The anecdote reveals something deeper: some scientific ideas can be understood structurally without admitting an intuitive explanation accessible to everyone. <strong>Knowledge sometimes outruns explanation.</strong></p>
+</section>
+
+<div class="divider"></div>
+
+<!-- THE TOWER -->
+<section class="tower-wrapper">
+  <div class="tower-title reveal">
+    <div class="section-kicker">The Epistemic Hierarchy</div>
+    <h2>Four Layers of Scientific Understanding</h2>
+    <p>Each level adds epistemic distance from the original evidence</p>
+  </div>
+
+  <div class="distance-meter reveal">
+    <div class="meter-bar">
+      <div class="meter-fill" id="distanceFill" style="width: 0%"></div>
+    </div>
+    <div class="meter-labels">
+      <span>Evidence</span>
+      <span>Epistemic distance</span>
+      <span>Public discourse</span>
+    </div>
+  </div>
+
+  <div class="tower">
+    <div class="tower-level reveal" data-distance="25">
+      <div class="level-label">Primary</div>
+      <div class="level-node">I</div>
+      <div class="level-desc" data-label="Primary">
+        <strong>Generate original results.</strong> Primary scientists produce experiments, develop theories, and test ideas under peer scrutiny. Closest to the evidence.
+      </div>
+    </div>
+
+    <div class="accumulation reveal">
+      <span class="acc-badge active-interp">+ interpretation</span>
+    </div>
+
+    <div class="tower-level reveal" data-distance="50">
+      <div class="level-label">Secondary</div>
+      <div class="level-node">II</div>
+      <div class="level-desc" data-label="Secondary">
+        <strong>Interpret research papers.</strong> They extract insights, compare results across studies, and sometimes approach the boundary of producing original work.
+      </div>
+    </div>
+
+    <div class="accumulation reveal">
+      <span class="acc-badge active-interp">+ interpretation</span>
+      <span class="acc-badge active-bias">+ bias</span>
+    </div>
+
+    <div class="tower-level reveal" data-distance="75">
+      <div class="level-label">Tertiary</div>
+      <div class="level-node">III</div>
+      <div class="level-desc" data-label="Tertiary">
+        <strong>Interpret interpretations.</strong> Consumers of reviews, summaries, and meta-analyses. Each distillation introduces further mediation between reader and evidence.
+      </div>
+    </div>
+
+    <div class="accumulation reveal">
+      <span class="acc-badge active-interp">+ interpretation</span>
+      <span class="acc-badge active-bias">+ bias</span>
+      <span class="acc-badge active-simp">+ simplification</span>
+    </div>
+
+    <div class="tower-level reveal" data-distance="100">
+      <div class="level-label">Quaternary</div>
+      <div class="level-node">IV</div>
+      <div class="level-desc" data-label="Quaternary">
+        <strong>Public discourse interpreting the summaries.</strong> Social discussion, forums, and debate. Participants interact with science at several removes from evidence. The realm of archetypes.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUATERNARY ARCHETYPES -->
+<section class="archetypes-wrapper">
+  <div class="tower-title reveal">
+    <div class="section-kicker">The Quaternary Level</div>
+    <h2>Four Breeds of Curious</h2>
+    <p>At the outermost layer, participants adopt distinct epistemic postures</p>
+  </div>
+
+  <div class="archetypes-grid">
+    <div class="archetype-card reveal">
+      <div class="card-num">01</div>
+      <h4>The Orthodoxy Defender</h4>
+      <p>Believes the current scientific consensus should be defended against misunderstanding. Emphasises the authority of established process and reinforces consensus. Valuable as a stabilising force, but risks conflating "the current model" with "the truth."</p>
+    </div>
+    <div class="archetype-card reveal">
+      <div class="card-num">02</div>
+      <h4>The Curious Skeptic</h4>
+      <p>Accepts mainstream science but probes its boundaries. Respectful of expertise yet intrigued by the possibility that recent discoveries may expose limitations in existing models. The engine of accommodation at the public level.</p>
+    </div>
+    <div class="archetype-card reveal">
+      <div class="card-num">03</div>
+      <h4>The Abstract Critic</h4>
+      <p>Engages logically but rarely tests ideas against empirical reality. More interested in internal consistency of arguments than confronting them with data. Skilled at revealing hidden assumptions, but disconnected from the evidential ground.</p>
+    </div>
+    <div class="archetype-card reveal">
+      <div class="card-num">04</div>
+      <h4>The Social Constructivist</h4>
+      <p>Focuses on the sociology of science rather than its empirical content. Points out that observation is no longer simple: modern data passes through layers of modelling, interpretation, and computational mediation. The model-builders are human, subject to bias.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DISTRIBUTED KNOWLEDGE -->
+<section class="distributed-section">
+  <h3 class="reveal">The Pencil Problem</h3>
+  <h2 class="reveal">Science as Distributed Knowledge</h2>
+
+  <div class="quote-block reveal">
+    <p>No single person possesses the knowledge required to produce a simple pencil. The wood, graphite, rubber, machinery, and logistics involve countless individuals cooperating through a system none fully comprehends.</p>
+    <span class="attribution">After Milton Friedman</span>
+  </div>
+
+  <p class="reveal">Modern science resembles this pencil. No individual mind grasps the whole structure. Knowledge is distributed across institutions, disciplines, and generations. This is not a deficiency; it is the nature of collective understanding at scale.</p>
+
+  <p class="reveal"><strong>Therefore:</strong></p>
+
+  <div class="consequences reveal">
+    <div class="consequence-item">
+      <span class="c-icon">&Iota;</span>
+      <div class="c-label">Understanding</div>
+      <div class="c-desc">becomes institutional</div>
+    </div>
+    <div class="consequence-item">
+      <span class="c-icon">&Kappa;</span>
+      <div class="c-label">Knowledge</div>
+      <div class="c-desc">becomes collective</div>
+    </div>
+    <div class="consequence-item">
+      <span class="c-icon">&Lambda;</span>
+      <div class="c-label">Interpretation</div>
+      <div class="c-desc">layers increase</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- LLM PROVOCATION -->
+<section class="llm-section">
+  <h3 class="reveal">The New Layer</h3>
+  <h2 class="reveal">This Is Where LLMs Come In</h2>
+
+  <p class="reveal">If knowledge is already distributed beyond any single mind, and if each interpretive layer adds bias and simplification, then the arrival of large language models introduces a genuinely novel question:</p>
+
+  <div class="llm-highlight reveal">
+    <h3>What happens when the interpreter is not human?</h3>
+    <p>LLMs operate across all four levels simultaneously. They consume primary literature, secondary analysis, tertiary review, and quaternary discourse. They assimilate everything, but do they ever accommodate?</p>
+    <p>An LLM can explain spin-statistics at the freshman level, which Feynman could not. But does that constitute understanding, or is it the most sophisticated assimilation mechanism ever built: reshaping the appearance of knowledge without genuine cognitive dissonance?</p>
+    <p>The epistemic hierarchy gains a fifth participant: a non-human layer that <em>compresses</em> interpretation rather than <em>adding</em> it. Whether this compression preserves or destroys meaning is the open question of our moment.</p>
+  </div>
+
+  <p class="reveal">The educational funnel, from school through university, was already a system for progressive refinement of approximation. LLMs now sit alongside that funnel, offering a lateral pathway that bypasses the traditional layering. The epistemic distance from evidence has been radically reconfigured.</p>
+
+  <p class="reveal">The broader public forms the ecosystem in which science operates: questioning, interpreting, challenging, and occasionally forcing <strong>accommodation</strong> where complacent <strong>assimilation</strong> has taken hold. If science advances at all, it does so because individuals at every level remain willing to confront the uncomfortable possibility that their understanding might be wrong.</p>
+</section>
+
+<div class="divider"></div>
+
+<!-- CTA -->
+<section class="cta-section reveal">
+  <h2>What Breed of Curious Are You?</h2>
+  <p>Explore the full essay on the sociology of scientific curiosity and the limits of explanation.</p>
+  <a href="https://mcmurmerings.wordpress.com/what-breed-of-curious-scientist-are-you/" target="_blank" rel="noopener" class="cta-link">Read on McMurmerings &#x2192;</a>
+</section>
+
+<div class="footer-note">
+  Dwight School London &middot; Department of Natural Sciences &middot; Philosophy of Science
+</div>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Distance meter driven by tower scroll
+const distanceFill = document.getElementById('distanceFill');
+const meterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const dist = e.target.getAttribute('data-distance');
+      if (dist) distanceFill.style.width = dist + '%';
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.tower-level').forEach(el => meterObserver.observe(el));
+
+// Piaget toggle
+function showPiaget(which) {
+  document.getElementById('piaget-assim').classList.toggle('active', which === 'assim');
+  document.getElementById('piaget-accom').classList.toggle('active', which === 'accom');
+  document.querySelectorAll('.piaget-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.toLowerCase().startsWith(which.slice(0,5)));
+  });
+}
+</script>
+
+</body>
+</html>
